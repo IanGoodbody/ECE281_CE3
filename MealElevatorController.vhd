@@ -2,10 +2,19 @@
 -- Company: USAFA/DFEC
 -- Engineer: Silva
 -- 
--- Create Date:    	10:33:47 07/07/2012 
--- Design Name:		CE3
--- Module Name:    	MooreElevatorController_Shell - Behavioral 
--- Description: 		Shell for completing CE3
+-- Create Date:    10:33:47 07/07/2012 
+-- Design Name: 
+-- Module Name:    MooreElevatorController_Silva - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
 --
 ----------------------------------------------------------------------------------
 library IEEE;
@@ -20,37 +29,34 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity MooreElevatorController is
+entity MealyElevatorController is
     Port ( clk : in  STD_LOGIC;
            reset : in  STD_LOGIC;
            stop : in  STD_LOGIC;
            up_down : in  STD_LOGIC;
-           floor : out  STD_LOGIC_VECTOR (3 downto 0));
-end MooreElevatorController;
+           floor : out  STD_LOGIC_VECTOR (3 downto 0);
+			  nextfloor : out std_logic_vector (3 downto 0));
+end MealyElevatorController;
 
-architecture Behavioral of MooreElevatorController is
+architecture Behavioral of MealyElevatorController is
 
---Below you create a new variable type! You also define what values that 
---variable type can take on. Now you can assign a signal as 
---"floor_state_type" the same way you'd assign a signal as std_logic 
 type floor_state_type is (floor1, floor2, floor3, floor4);
 
---Here you create a variable "floor_state" that can take on the values
---defined above. Neat-o!
 signal floor_state : floor_state_type;
 
 begin
----------------------------------------------
---Below you will code your next-state process
----------------------------------------------
 
---This line will set up a process that is sensitive to the clock
-floor_state_machine: process(clk) -- No reset signal in sensitivity list therefore the reset is syncronyous 
+---------------------------------------------------------
+--Code your Mealy machine next-state process below
+--Question: Will it be different from your Moore Machine?
+---------------------------------------------------------
+floor_state_machine: process(clk)
 begin
-	--clk'event and clk='1' is VHDL-speak for a rising edge
-	if clk'event and clk='1' then
-		--reset is active high and will return the elevator to floor1
-		--Question: is reset synchronous or asynchronous?
+	--On rising edge of clock
+	if rising_edge(clk) then
+	--The code will be the same as the moore machine as this process
+	--represents the input logic!!! That was a lot of hitting my head against things
+	--for nothing
 		if reset='1' then
 			floor_state <= floor1;
 		--now we will code our next-state logic
@@ -115,13 +121,21 @@ begin
 	end if;
 end process;
 
--- Here you define your output logic. Finish the statements below
--- Symbolic of the output combinational logic.
+-----------------------------------------------------------
+--Code your Ouput Logic for your Mealy machine below
+--Remember, now you have 2 outputs (floor and nextfloor)
+-----------------------------------------------------------
 floor <= "0001" when (floor_state = floor1) else
 			"0010" when (floor_state = floor2) else
 			"0011" when (floor_state = floor3) else
 			"0100" when (floor_state = floor4) else
-			"0001";--otherwise reset output to floor 1
+			"0001";
+--The nextfloor output is dependent on the mealy machine inputs
+nextfloor <= "0001" when (floor_state = floor2 and up_down = '0') else
+				 "0010" when ((floor_state = floor1 and up_down = '1') or (floor_state = floor3 and up_down = '0')) else
+				 "0011" when ((floor_state = floor2 and up_down = '1') or (floor_state = floor4 and up_down = '0')) else
+				 "0100" when (floor_state = floor3 and up_down = '1') else
+				 "0001";
 
 end Behavioral;
 
