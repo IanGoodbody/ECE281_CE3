@@ -104,7 +104,7 @@ begin
 						floor_state <= floor3;
 					--For any other case stay at the same floor
 					else 
-						floor_state <= floor 4;
+						floor_state <= floor4;
 					end if;
 				
 				--This line accounts for phantom states
@@ -116,6 +116,7 @@ begin
 end process;
 
 -- Here you define your output logic. Finish the statements below
+-- Symbolic of the output combinational logic.
 floor <= "0001" when (floor_state = floor1) else
 			"0010" when (floor_state = floor2) else
 			"0011" when (floor_state = floor3) else
